@@ -1,0 +1,17 @@
+PATH
+  remote: .
+  specs:
+    tp_link_hs110 (0.0.1)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+
+PLATFORMS
+  x64-mingw32
+
+DEPENDENCIES
+  tp_link_hs110!
+
+BUNDLED WITH
+   1.17.2
