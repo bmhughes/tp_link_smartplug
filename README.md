@@ -1,5 +1,5 @@
-# tplink-hs110-smartplug
+# tp_link_smartplug
 
-Ruby script to data from a TP Link HS110 smart plug. Can output in InfluxDB Line Protocol format.
+Ruby gem to retrieve data and control a TP Link HS100/HS110 smart plug.
 
-[![Build Status](https://gitlab.bmhughes.co.uk/tplink-hs110-smartplug/badges/master/build.svg)](https://gitlab.bmhughes.co.uk/tplink-hs110-smartplug) [![Coverage Report](https://gitlab.bmhughes.co.uk/tplink-hs110-smartplug/badges/master/coverage.svg)](https://gitlab.bmhughes.co.uk/tplink-hs110-smartplug/commits/master)
+[![Build Status](https://gitlab.bmhughes.co.uk/bmhughes/tp_link_smartplug/badges/master/build.svg)](https://gitlab.bmhughes.co.uk/bmhughes/tp_link_smartplug) [![Coverage Report](https://gitlab.bmhughes.co.uk/bmhughes/tp_link_smartplug/badges/master/coverage.svg)](https://gitlab.bmhughes.co.uk/bmhughes/tp_link_smartplug/commits/master)
