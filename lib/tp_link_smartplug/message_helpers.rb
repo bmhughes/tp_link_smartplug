@@ -1,8 +1,8 @@
-module TpLinkHs110
+module TpLinkSmartplug
   module MessageHelpers
     def encrypt(string)
       key = 171
-      result = [30].pack('N')
+      result = [string.length].pack('N')
       string.each_char do |char|
         key = a = key ^ char.ord
         result.concat(a.chr)

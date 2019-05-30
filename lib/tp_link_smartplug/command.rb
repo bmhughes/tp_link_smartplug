@@ -1,4 +1,4 @@
-module TpLinkHs110
+module TpLinkSmartplug
   module Command
     INFO = '{"system":{"get_sysinfo":{}}}'.freeze
     ON = '{"system":{"set_relay_state":{"state":1}}}'.freeze

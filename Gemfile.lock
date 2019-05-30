@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    tp_link_hs110 (0.0.1)
+    tp_link_smartplug (0.0.1)
 
 GEM
   remote: https://rubygems.org/
@@ -11,7 +11,7 @@ PLATFORMS
   x64-mingw32
 
 DEPENDENCIES
-  tp_link_hs110!
+  tp_link_smartplug!
 
 BUNDLED WITH
    1.17.2

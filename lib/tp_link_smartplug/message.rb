@@ -1,17 +1,19 @@
 require 'socket'
-require 'tp_link_hs110/helpers'
-require 'tp_link_hs110/message_helpers'
+require 'tp_link_smartplug/helpers'
+require 'tp_link_smartplug/message_helpers'
 
-module TpLinkHs110
+module TpLinkSmartplug
   module Message
-    include TpLinkHs110::Helpers
-    include TpLinkHs110::MessageHelpers
+    include TpLinkSmartplug::Helpers
+    include TpLinkSmartplug::MessageHelpers
 
     def send(address:, port:, command:, timeout: 3, debug: false)
       sockaddr = Addrinfo.getaddrinfo(address.to_s, port, Socket::PF_INET, :STREAM, 6).first.to_sockaddr
+      STDOUT.puts(debug_message("Will connect to #{address.to_s} port #{port.to_s}")) if debug
       
       sock = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM)
       begin
+        STDOUT.puts(debug_message("Connecting")) if debug
         sock.connect_nonblock(sockaddr)
       rescue IO::WaitWritable
         if IO.select(nil, [sock], nil, timeout)
@@ -19,6 +21,7 @@ module TpLinkHs110
             sock.connect_nonblock(sockaddr)
           rescue Errno::EISCONN
             # Socket is connected, continue.
+            STDOUT.puts(debug_message("Connected")) if debug
           rescue StandardError => e
             # Unexpected exception
             sock.close
@@ -30,19 +33,23 @@ module TpLinkHs110
         end
       end
 
-      begin
-        sock.write(encrypt(command))
+      STDOUT.puts(debug_message("Sending: #{decrypt(encrypt(command)[4..])}")) if debug
+      sock.write(encrypt(command))
+
+      begin        
         data = sock.recv_nonblock(2048)
       rescue IO::WaitReadable
-        IO.select([sock], nil, nil, timeout)
+        IO.select([sock])
         retry
-      rescue StandardError => e
-        STDERR.puts(debug_message("Error occurred sending command. Exception: #{e}"))
       ensure
         sock.close
       end
-      raise if data.nil?
-      data = decrypt(data)
+
+      raise 'No data received' if data.nil? || data.empty?
+      STDOUT.puts(debug_message("Received Raw: #{data}")) if debug
+      data = decrypt(data[4..])
+      STDOUT.puts(debug_message("Received: #{data}")) if debug
+      data
     end
   end
 end
