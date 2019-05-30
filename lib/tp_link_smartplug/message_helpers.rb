@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module TpLinkSmartplug
   # Helper methods for plug communication messages
   module MessageHelpers
