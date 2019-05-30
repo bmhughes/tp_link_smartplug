@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Gem::Specification.new do |spec|
   spec.name        = 'tp_link_smartplug'
   spec.version     = '0.0.1'
@@ -8,4 +10,3 @@ Gem::Specification.new do |spec|
   spec.files       = Dir.glob('./lib/**/*.rb')
   spec.license     = 'Apache-2.0'
 end
-

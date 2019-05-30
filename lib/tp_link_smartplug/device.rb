@@ -1,13 +1,16 @@
+# frozen_string_literal: true
+
 require 'socket'
 require 'ipaddr'
 require 'json'
 require 'tp_link_smartplug/message'
 
 module TpLinkSmartplug
+  # Provides an interface to a plug
   class Device
     include TpLinkSmartplug::Message
-    
-    attr_accessor :address   
+
+    attr_accessor :address
     attr_accessor :timeout
     attr_accessor :port
     attr_accessor :debug

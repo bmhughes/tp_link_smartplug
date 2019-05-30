@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module TpLinkSmartplug
+  # Helper methods for plug communication messages
   module MessageHelpers
     def encrypt(string)
       key = 171
@@ -7,9 +10,9 @@ module TpLinkSmartplug
         key = a = key ^ char.ord
         result.concat(a.chr)
       end
-      return result
+      result
     end
-    
+
     def decrypt(string)
       key = 171
       result = ''
@@ -18,7 +21,7 @@ module TpLinkSmartplug
         key = char.ord
         result.concat(a.chr)
       end
-      return result
+      result
     end
   end
 end
