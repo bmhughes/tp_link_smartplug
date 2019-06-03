@@ -10,6 +10,13 @@ module TpLinkSmartplug
     include TpLinkSmartplug::Helpers
     include TpLinkSmartplug::MessageHelpers
 
+    # Sends a message to a smart plug and receives the result
+    #
+    # @address [IPAddr] the IP address for the smart plug
+    # @port [Integer] the port to connect to for the smart plug
+    # @command [String] the raw message to be send to the smart plug
+    # @timeout [Integer] the time to wait when connecting or sending a message before a timeout occurs
+    # @debug [TrueClass, FalseClass] enable debug logging output
     def send(address:, port:, command:, timeout: 3, debug: false)
       sockaddr = Addrinfo.getaddrinfo(address.to_s, port, Socket::PF_INET, :STREAM, 6).first.to_sockaddr
       STDOUT.puts(debug_message("Will connect to #{address} port #{port}")) if debug

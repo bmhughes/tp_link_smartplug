@@ -1,6 +1,9 @@
 module TpLinkSmartplug
   # Helper methods for plug communication messages
   module MessageHelpers
+    # Encrypts a message to send to the smart plug
+    #
+    # @string format [String] the message to be encrypted
     def encrypt(string)
       key = 171
       result = [string.length].pack('N')
@@ -11,6 +14,9 @@ module TpLinkSmartplug
       result
     end
 
+    # Decrypts a message received from the smart plug
+    #
+    # @string format [String] the message to be decrypted
     def decrypt(string)
       key = 171
       result = ''
