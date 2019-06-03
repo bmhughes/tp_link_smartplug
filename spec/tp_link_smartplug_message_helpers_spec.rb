@@ -10,7 +10,7 @@ RSpec.describe TpLinkSmartplug::MessageHelpers do
   string = 'test'
   encrypted = "\x00\x00\x00\x04\xDF\xBA\xC9\xBD".force_encoding(Encoding::ASCII_8BIT)
 
-  it 'encrypts' do    
+  it 'encrypts' do
     expect(dc.encrypt(string)).not_to be nil
     expect(dc.encrypt(string)).to eql(encrypted)
   end

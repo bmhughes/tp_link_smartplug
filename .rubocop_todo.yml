@@ -17,3 +17,11 @@ Metrics/LineLength:
 Style/BlockComments:
   Exclude:
     - 'spec/spec_helper.rb'
+
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - 'lib/tp_link_smartplug/message_helpers.rb'
+    - 'spec/tp_link_smartplug_message_helpers_spec.rb'
+
+Metrics/BlockNesting:
+  Max: 4

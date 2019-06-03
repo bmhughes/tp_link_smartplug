@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Gem::Specification.new do |spec|
   spec.name        = 'tp_link_smartplug'
   spec.version     = '0.0.1'
