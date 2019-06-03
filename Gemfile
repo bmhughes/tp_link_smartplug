@@ -5,7 +5,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
+  gem 'rubocop'
   gem 'rspec'
-  gem 'rcov'
   gem 'simplecov'
 end
