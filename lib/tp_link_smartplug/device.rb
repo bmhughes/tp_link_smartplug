@@ -37,7 +37,7 @@ module TpLinkSmartplug
       :energy
     ].each do |method|
       define_method method do
-        JSON.parse(send(address: @address, port: @port, command: TpLinkSmartplug::Command.const_get(method.upcase), timeout: @timeout, debug: @debug))
+        JSON.parse(poll(address: @address, port: @port, command: TpLinkSmartplug::Command.const_get(method.upcase), timeout: @timeout, debug: @debug))
       end
     end
   end

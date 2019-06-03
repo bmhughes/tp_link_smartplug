@@ -25,3 +25,21 @@ Style/FrozenStringLiteralComment:
 
 Metrics/BlockNesting:
   Max: 4
+
+Metrics/MethodLength:
+  Max: 30
+
+Metrics/AbcSize:
+  Max: 25
+  Include:
+    - lib/tp_link_smartplug/message.rb
+
+Metrics/CyclomaticComplexity:
+  Max: 8
+  Include:
+    - lib/tp_link_smartplug/message.rb
+
+Metrics/PerceivedComplexity:
+  Max: 9
+  Include:
+    - lib/tp_link_smartplug/message.rb

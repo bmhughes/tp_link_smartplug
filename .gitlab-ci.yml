@@ -6,6 +6,7 @@ stages:
 
 .ruby_docker_template: &ruby_docker_template
   before_script:
+    - ruby --version
     - bundle --version
     - bundle install
   image: ruby:latest
@@ -14,7 +15,6 @@ rubocop:
   stage: lint
   <<: *ruby_docker_template
   script:
-   - ruby --version
    - rubocop --version
    - rubocop
   tags:
@@ -24,7 +24,6 @@ rspec:
   stage: rspec
   <<: *ruby_docker_template
   script:
-   - ruby --version
    - rspec --version
    - rake spec
   tags:
@@ -34,7 +33,6 @@ gem_build:
   stage: build
   <<: *ruby_docker_template
   script:
-   - ruby --version
    - gem --version
    - gem build tp_link_smartplug.gemspec
   tags:

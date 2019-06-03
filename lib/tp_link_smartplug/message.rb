@@ -10,57 +10,59 @@ module TpLinkSmartplug
     include TpLinkSmartplug::Helpers
     include TpLinkSmartplug::MessageHelpers
 
-    # Sends a message to a smart plug and receives the result
-    #
-    # @address [IPAddr] the IP address for the smart plug
-    # @port [Integer] the port to connect to for the smart plug
-    # @command [String] the raw message to be send to the smart plug
-    # @timeout [Integer] the time to wait when connecting or sending a message before a timeout occurs
-    # @debug [TrueClass, FalseClass] enable debug logging output
-    def send(address:, port:, command:, timeout: 3, debug: false)
-      sockaddr = Addrinfo.getaddrinfo(address.to_s, port, Socket::PF_INET, :STREAM, 6).first.to_sockaddr
-      STDOUT.puts(debug_message("Will connect to #{address} port #{port}")) if debug
-
-      sock = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM)
-      begin
-        STDOUT.puts(debug_message('Connecting')) if debug
-        sock.connect_nonblock(sockaddr)
-      rescue IO::WaitWritable
-        if IO.select(nil, [sock], nil, timeout)
-          begin
-            sock.connect_nonblock(sockaddr)
-          rescue Errno::EISCONN
-            # Socket is connected, continue.
-            STDOUT.puts(debug_message('Connected')) if debug
-          rescue StandardError => e
-            # Unexpected exception
-            sock.close
-            raise e
-          end
-        else
-          sock.close
-          raise "Connection timeout connecting to address #{address}, port #{port}."
-        end
-      end
-
+    def poll(address:, port:, command:, timeout: 3, debug: false)
+      socket = connect(address: address, port: port, timeout: timeout, debug: debug)
       STDOUT.puts(debug_message("Sending: #{decrypt(encrypt(command)[4..])}")) if debug
-      sock.write(encrypt(command))
 
       begin
-        data = sock.recv_nonblock(2048)
-      rescue IO::WaitReadable
-        IO.select([sock])
+        socket.write_nonblock(encrypt(command))
+        data = socket.recv_nonblock(2048)
+      rescue IO::WaitReadable, IO::WaitWritable
+        IO.select([socket], [socket])
         retry
       ensure
-        sock.close
+        disconnect(socket: socket)
       end
 
+      raise 'Error occured during disconnect' unless socket.closed?
       raise 'No data received' if data.nil? || data.empty?
 
       STDOUT.puts(debug_message("Received Raw: #{data}")) if debug
       data = decrypt(data[4..])
       STDOUT.puts(debug_message("Received: #{data}")) if debug
+
       data
+    end
+
+    private
+
+    def connect(address:, port:, timeout: 3, debug: false)
+      STDOUT.puts(debug_message("Connecting to #{address} port #{port}")) if debug
+
+      Socket.new(Socket::AF_INET, Socket::SOCK_STREAM).tap do |socket|
+        sockaddr = Addrinfo.getaddrinfo(address.to_s, port, Socket::PF_INET, :STREAM, 6).first.to_sockaddr
+        STDOUT.puts(debug_message("Connecting, socket closed: #{socket.closed?}")) if debug
+        socket.connect_nonblock(sockaddr)
+      rescue IO::WaitWritable
+        if IO.select(nil, [socket], nil, timeout)
+          begin
+            socket.connect_nonblock(sockaddr)
+          rescue Errno::EISCONN
+            STDOUT.puts(debug_message('Connected')) if debug
+          rescue StandardError => e
+            socket.close
+            STDOUT.puts(debug_message('Unexpected exception encountered.')) if debug
+            raise e
+          end
+        else
+          socket.close
+          raise "Connection timeout connecting to address #{address}, port #{port}."
+        end
+      end
+    end
+
+    def disconnect(socket:)
+      socket.close unless socket.closed? || socket.nil?
     end
   end
 end
