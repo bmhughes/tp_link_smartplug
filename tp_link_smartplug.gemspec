@@ -7,6 +7,7 @@ Gem::Specification.new do |spec|
   spec.description = 'Control and retrieve data from a TP-Link HS100/110 (Metered) Smartplug'
   spec.authors     = ['Ben Hughes']
   spec.email       = 'bmhughes@bmhughes.co.uk'
+  spec.homepage    = 'https://github.com/bmhughes/tp_link_smartplug'
   spec.files       = Dir.glob('./lib/**/*.rb')
   spec.license     = 'Apache-2.0'
 end
