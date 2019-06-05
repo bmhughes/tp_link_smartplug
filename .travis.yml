@@ -1,0 +1,34 @@
+language: ruby
+cache: bundler
+os:
+- linux
+
+rvm:
+  - 2.5.5
+  - 2.6.3
+
+install:
+  - bundle install
+
+before_script:
+- ruby --version
+- bundle --version
+
+script: rake test
+
+jobs:  
+  include:
+  - stage: Build
+    name: Build
+    rvm: 2.6.3
+    script: rake build
+    if: branch = master
+
+deploy:
+  provider: rubygems
+  api_key:
+    secure: dDJFB+Bp9/66bC1yY0vFr67TMe5UpuHJZagnn9Nzx+Z8o9ijPpujGpV9fku+imE/MypjpPNLMb/YFZFwc69ZgRJxFk3vOVnj7Vt33PlwPk51S/iYbYPJcG6MmcbWCGoQC5/GhRd2Kx9AE1k0XVG3fOnJuzRd/alRl7KoDu4l5NtNHOy/IKNWBnM4bEaS+vP2Lpgecoxm6JYHVLtackz85jktvBDn1ls0oqPP0sY/9/MsJJPtHlKpOOCm1C5q+TVmd/IVmbKt1tecYCTj017POrGrN/brpTLHbObjkf01FxS1r0hJjLE1nfRHZHFznaSOowAZZGnR/CuEIKlM6HM3oQ3+wiYBNWM+YeBr+4pfBp/8oOYiVk0SJuO2RCOmeURFyBBjyL3vFzE4uG8Avp9ChOHB9921raFVES087L1lHUnMcYwQ2mIC1iT7A0yNWTidCfPZt6Hpv2BOIJbvnbtOHMGI1sZVCzlmG+jDL/DE81MynNPR6EchFSuqHR4hEZ6CsIvfDuN+2vIIPSAvoYCtowgEvb9xFTRICNx9llga6HiyOALDJnY5zPbytG4qp7kmYE5lhgaBtgi0uPYCiAtwza04DDWHvCT871ThZM4XYIGQq0Fr6SBMaYmR1LG59fooIKb3TocpFCaCRoAeWQXi8q2pxSUjVKUpM95RuZkzK+Y=
+  gem: tp_link_smartplug
+  on:
+    tags: true
+    repo: bmhughes/tp_link_smartplug
