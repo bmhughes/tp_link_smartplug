@@ -19,30 +19,4 @@ Thanks for the following sources for the information required to make this gem.
 
 ### influx_hs110_energy.rb
 
-Outputs smart plug data in the InfluxDB line data format. For use with the **telegraf** *exec* input plugin. Set the metric name, address and tags in the `plugs` hash.
-
-#### Example
-
-Metric name: Test Plug 1
-Address: 192.0.2.10
-Tags: Test-Tag-1, Test-Tag-2
-
-```ruby
-
-plugs = {
-  'Test Plug 1' => {
-    'address' => '192.0.2.10',
-    'tags' => {
-      'test-tag-1' => 'true',
-      'test-tag-2' => 'false'
-    }
-  }
-}
-
-```
-
-Will yield to STDOUT:
-
-```bash
-Test Plug 1,test-tag-1=true,test-tag-2=false voltage=240657i,current=288i,power=62120i
-```
+The example script has been moved to the [tp_link_smartplug_influx](https://github.com/bmhughes/tp_link_smartplug_influx) repo.
