@@ -2,7 +2,11 @@
 
 Ruby gem to retrieve data and control a TP Link HS100/HS110 smart plug.
 
-[![Build Status](https://gitlab.bmhughes.co.uk/bmhughes/tp_link_smartplug/badges/master/build.svg)](https://gitlab.bmhughes.co.uk/bmhughes/tp_link_smartplug) [![Coverage Report](https://gitlab.bmhughes.co.uk/bmhughes/tp_link_smartplug/badges/master/coverage.svg)](https://gitlab.bmhughes.co.uk/bmhughes/tp_link_smartplug/commits/master)
+![Release](https://img.shields.io/github/release/bmhughes/tp_link_smartplug.svg) [![Build Status](https://travis-ci.org/bmhughes/tp_link_smartplug.svg?branch=master)](https://travis-ci.org/bmhughes/tp_link_smartplug) ![License](https://img.shields.io/github/license/bmhughes/tp_link_smartplug.svg)
+
+## Change Log
+
+- See [CHANGELOG.md](/CHANGELOG.md) for version details and changes.
 
 ## bin
 
