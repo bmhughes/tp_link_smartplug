@@ -1,5 +1,9 @@
 # tp_link_smartplug
 
+## v0.0.3
+
+- Fix string length typo
+
 ## v0.0.2
 
 - Add required ruby version to gemspec
