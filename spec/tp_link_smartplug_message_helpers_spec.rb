@@ -16,7 +16,7 @@ RSpec.describe TpLinkSmartplug::MessageHelpers do
   end
 
   it 'decrypts' do
-    expect(dc.decrypt(encrypted[4..])).not_to be nil
-    expect(dc.decrypt(encrypted[4..])).to eql(string)
+    expect(dc.decrypt(encrypted[4..encrypted.length])).not_to be nil
+    expect(dc.decrypt(encrypted[4..encrypted.length])).to eql(string)
   end
 end

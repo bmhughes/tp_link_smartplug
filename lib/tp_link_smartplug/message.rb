@@ -12,7 +12,7 @@ module TpLinkSmartplug
 
     def poll(address:, port:, command:, timeout: 3, debug: false)
       socket = connect(address: address, port: port, timeout: timeout, debug: debug)
-      STDOUT.puts(debug_message("Sending: #{decrypt(encrypt(command)[4..])}")) if debug
+      STDOUT.puts(debug_message("Sending: #{decrypt(encrypt(command)[4..str.length])}")) if debug
 
       begin
         socket.write_nonblock(encrypt(command))
@@ -28,7 +28,7 @@ module TpLinkSmartplug
       raise 'No data received' if data.nil? || data.empty?
 
       STDOUT.puts(debug_message("Received Raw: #{data}")) if debug
-      data = decrypt(data[4..])
+      data = decrypt(data[4..str.length])
       STDOUT.puts(debug_message("Received: #{data}")) if debug
 
       data
