@@ -3,6 +3,7 @@
 require 'socket'
 require 'ipaddr'
 require 'json'
+require 'tp_link_smartplug/helpers'
 require 'tp_link_smartplug/message'
 
 module TpLinkSmartplug
@@ -14,6 +15,7 @@ module TpLinkSmartplug
   # @attr [Integer] timeout Timeout value for connecting and sending commands to the plug
   # @attr [true, false] debug Control debug logging
   class Device
+    include TpLinkSmartplug::Helpers
     include TpLinkSmartplug::Message
 
     attr_accessor :address
@@ -26,6 +28,92 @@ module TpLinkSmartplug
       @port = port
       @timeout = 3
       @debug = false
+      @sockaddr = Addrinfo.getaddrinfo(address.to_s, port, Socket::PF_INET, :STREAM, 6).first.to_sockaddr
+      @socket = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM)
+    end
+
+    # Open connection to plug
+    #
+    def connect
+      debug_message("Connecting to #{@address} port #{@port}") if @debug
+      debug_message("Connecting, socket state: #{@socket.closed? ? 'closed' : 'open'}") if @debug
+
+      @socket = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM) if closed?
+
+      begin
+        @socket.connect_nonblock(@sockaddr)
+      rescue IO::WaitWritable
+        if IO.select(nil, [@socket], nil, timeout)
+          begin
+            @socket.connect_nonblock(@sockaddr)
+          rescue Errno::EISCONN
+            debug_message('Connected') if debug
+          rescue StandardError => e
+            disconnect
+            debug_message('Unexpected exception encountered.') if debug
+            raise e
+          end
+        else
+          @socket.close
+          raise "Connection timeout connecting to address #{@address}, port #{@port}."
+        end
+      rescue Errno::EISCONN
+        debug_message('Connected') if debug
+      end
+    end
+
+    # Close connection to plug
+    #
+    def disconnect
+      @socket.close unless @socket.closed?
+    end
+
+    # Return connection state
+    #
+    # @return [True, False]
+    def open?
+      !@socket.closed?
+    end
+
+    # Return connection state
+    #
+    # @return [True, False]
+    def closed?
+      @socket.closed?
+    end
+
+    # Polls a plug with a command
+    #
+    # @param command [String] the command to send to the plug
+    # @return [Hash] the output from the plug command
+    def poll(command:)
+      connect
+
+      begin
+        debug_message("Sending: #{decrypt(encrypt(command)[4..(command.length + 4)])}") if @debug
+        @socket.write_nonblock(encrypt(command))
+      rescue IO::WaitWritable
+        IO.select(nil, [@socket])
+        retry
+      end
+
+      begin
+        data = @socket.recv_nonblock(2048)
+      rescue IO::WaitReadable
+        IO.select([@socket])
+        retry
+      ensure
+        disconnect unless closed?
+      end
+
+      raise 'Error occured during disconnect' unless closed?
+      raise 'No data received' if data.nil? || data.empty?
+
+      debug_message("Received Raw: #{data}") if debug
+      data = decrypt(data[4..data.length])
+      debug_message("Received Decrypted: #{data}") if debug
+
+      data
     end
 
     # @!method info
@@ -64,7 +152,6 @@ module TpLinkSmartplug
     # @!method energy
     #   Return plug energy data
     #   @return [Hash]
-
     [
       :info,
       :on,
@@ -80,7 +167,7 @@ module TpLinkSmartplug
       :energy
     ].each do |method|
       define_method method do
-        JSON.parse(poll(address: @address, port: @port, command: TpLinkSmartplug::Command.const_get(method.upcase), timeout: @timeout, debug: @debug))
+        JSON.parse(poll(command: TpLinkSmartplug::Command.const_get(method.upcase)))
       end
     end
   end

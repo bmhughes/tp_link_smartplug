@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name        = 'tp_link_smartplug'
-  spec.version     = '0.0.3'
+  spec.version     = '0.1.0.alpha1'
   spec.summary     = 'TP-Link HS100/110 Smart Plug interaction library'
   spec.description = 'Control and retrieve data from a TP-Link HS100/110 (Metered) Smartplug'
   spec.authors     = ['Ben Hughes']

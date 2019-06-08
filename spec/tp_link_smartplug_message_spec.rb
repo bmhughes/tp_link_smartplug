@@ -1,10 +1,12 @@
-require 'tp_link_smartplug/message_helpers'
+# frozen_string_literal: false
+
+require 'tp_link_smartplug/message'
 
 class DummyClass
-  include TpLinkSmartplug::MessageHelpers
+  include TpLinkSmartplug::Message
 end
 
-RSpec.describe TpLinkSmartplug::MessageHelpers do
+RSpec.describe TpLinkSmartplug::Message do
   dc = DummyClass.new
 
   string = 'test'

@@ -11,8 +11,8 @@ Ruby gem to retrieve data and control a TP Link HS100/HS110 smart plug.
 
 Thanks for the following sources for the information required to make this gem.
 
-- https://www.softscheck.com/en/reverse-engineering-tp-link-hs110/
-- https://www.beardmonkey.eu/tplink/hs110/2017/11/21/collect-and-store-realtime-data-from-the-tp-link-hs110.html
+- <https://www.softscheck.com/en/reverse-engineering-tp-link-hs110/>
+- <https://www.beardmonkey.eu/tplink/hs110/2017/11/21/collect-and-store-realtime-data-from-the-tp-link-hs110.html)>
 
 ## Change Log
 
