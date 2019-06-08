@@ -10,9 +10,17 @@ module TpLinkSmartplug
     include TpLinkSmartplug::Helpers
     include TpLinkSmartplug::MessageHelpers
 
+    # Polls a plug with a command
+    #
+    # @param address [IPAddr] ipaddr object for the IP address of the plug
+    # @param port [Integer] integer value of the port to connect to on the plug
+    # @param command [String] the command to send to the plug
+    # @param timeout [Integer] the value in seconds before a timeout occurs when accessing a plug
+    # @param debug [true, false] control debug logging output
+    # @return [String] the output from the plug command
     def poll(address:, port:, command:, timeout: 3, debug: false)
       socket = connect(address: address, port: port, timeout: timeout, debug: debug)
-      STDOUT.puts(debug_message("Sending: #{decrypt(encrypt(command)[4..command.length])}")) if debug
+      debug_message("Sending: #{decrypt(encrypt(command)[4..(command.length + 4)])}") if debug
 
       begin
         socket.write_nonblock(encrypt(command))
@@ -27,31 +35,38 @@ module TpLinkSmartplug
       raise 'Error occured during disconnect' unless socket.closed?
       raise 'No data received' if data.nil? || data.empty?
 
-      STDOUT.puts(debug_message("Received Raw: #{data}")) if debug
+      debug_message("Received Raw: #{data}") if debug
       data = decrypt(data[4..data.length])
-      STDOUT.puts(debug_message("Received: #{data}")) if debug
+      debug_message("Received Decrypted: #{data}") if debug
 
       data
     end
 
     private
 
+    # Connect to a plug
+    #
+    # @param address [IPAddr] ipaddr object for the IP address of the plug
+    # @param port [Integer] integer value of the port to connect to on the plug
+    # @param timeout [Integer] the value in seconds before a timeout occurs when accessing a plug
+    # @param debug [true, false] control debug logging output
+    # @return [Socket] socket object for the plug connection
     def connect(address:, port:, timeout: 3, debug: false)
-      STDOUT.puts(debug_message("Connecting to #{address} port #{port}")) if debug
+      debug_message("Connecting to #{address} port #{port}") if debug
 
       Socket.new(Socket::AF_INET, Socket::SOCK_STREAM).tap do |socket|
         sockaddr = Addrinfo.getaddrinfo(address.to_s, port, Socket::PF_INET, :STREAM, 6).first.to_sockaddr
-        STDOUT.puts(debug_message("Connecting, socket closed: #{socket.closed?}")) if debug
+        debug_message("Connecting, socket state: #{socket.closed? ? 'closed' : 'open'}") if debug
         socket.connect_nonblock(sockaddr)
       rescue IO::WaitWritable
         if IO.select(nil, [socket], nil, timeout)
           begin
             socket.connect_nonblock(sockaddr)
           rescue Errno::EISCONN
-            STDOUT.puts(debug_message('Connected')) if debug
+            debug_message('Connected') if debug
           rescue StandardError => e
             socket.close
-            STDOUT.puts(debug_message('Unexpected exception encountered.')) if debug
+            debug_message('Unexpected exception encountered.') if debug
             raise e
           end
         else
@@ -61,6 +76,10 @@ module TpLinkSmartplug
       end
     end
 
+    # Disconnect from a plug
+    #
+    # @param socket [Socket] socket object to disconnect
+    # @return [Socket] socket object for the plug connection
     def disconnect(socket:)
       socket.close unless socket.closed? || socket.nil?
     end

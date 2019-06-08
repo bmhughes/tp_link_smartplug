@@ -35,11 +35,11 @@ Metrics/AbcSize:
     - lib/tp_link_smartplug/message.rb
 
 Metrics/CyclomaticComplexity:
-  Max: 8
+  Max: 9
   Include:
     - lib/tp_link_smartplug/message.rb
 
 Metrics/PerceivedComplexity:
-  Max: 9
+  Max: 10
   Include:
     - lib/tp_link_smartplug/message.rb
