@@ -21,6 +21,7 @@ module TpLinkSmartplug
     attr_accessor :address
     attr_accessor :port
     attr_accessor :timeout
+    attr_accessor :poll_auto_close
     attr_accessor :debug
 
     def initialize(address:, port: 9999)
@@ -30,6 +31,7 @@ module TpLinkSmartplug
       @debug = false
       @sockaddr = Addrinfo.getaddrinfo(address.to_s, port, Socket::PF_INET, :STREAM, 6).first.to_sockaddr
       @socket = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM)
+      @poll_auto_close = true
     end
 
     # Open connection to plug
@@ -68,21 +70,21 @@ module TpLinkSmartplug
       @socket.close unless @socket.closed?
     end
 
-    # Return connection state
+    # Return connection state open
     #
     # @return [True, False]
     def open?
       !@socket.closed?
     end
 
-    # Return connection state
+    # Return connection state closed
     #
     # @return [True, False]
     def closed?
       @socket.closed?
     end
 
-    # Polls a plug with a command
+    # Polls plug with a command
     #
     # @param command [String] the command to send to the plug
     # @return [Hash] the output from the plug command
@@ -102,11 +104,13 @@ module TpLinkSmartplug
       rescue IO::WaitReadable
         IO.select([@socket])
         retry
-      ensure
-        disconnect unless closed?
       end
 
-      raise 'Error occured during disconnect' unless closed?
+      if @poll_auto_close && !closed?
+        disconnect
+        raise 'Error occured during disconnect' unless closed?
+      end
+
       raise 'No data received' if data.nil? || data.empty?
 
       debug_message("Received Raw: #{data}") if debug
