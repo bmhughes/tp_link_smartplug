@@ -35,6 +35,8 @@ gem_build:
   script:
    - gem --version
    - gem build tp_link_smartplug.gemspec
+   - yard --version
+   - yard
   tags:
     - ruby
   artifacts:
@@ -43,4 +45,5 @@ gem_build:
     expire_in: 3 days
     paths:
       - '*.gem'
+      - 'doc/'
 ...
