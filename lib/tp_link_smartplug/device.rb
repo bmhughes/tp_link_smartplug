@@ -29,7 +29,7 @@ module TpLinkSmartplug
       @port = port
       @timeout = 3
       @debug = false
-      @sockaddr = Addrinfo.getaddrinfo(address.to_s, port, Socket::PF_INET, :STREAM, 6).first.to_sockaddr
+      @sockaddr = Addrinfo.getaddrinfo(@address.to_s, @port, Socket::PF_INET, :STREAM, 6).first.to_sockaddr
       @socket = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM)
       @poll_auto_close = true
     end
@@ -69,6 +69,8 @@ module TpLinkSmartplug
     def disconnect
       @socket.close unless @socket.closed?
     end
+
+    alias_method :close, :disconnect
 
     # Return connection state open
     #
