@@ -5,7 +5,7 @@ require 'rake'
 require 'rubocop/rake_task'
 require 'rspec/core/rake_task'
 
-task default: 'test'
+task default: 'build'
 
 RSpec::Core::RakeTask.new(:spec) do |t|
   t.pattern = Dir.glob('spec/**/*_spec.rb')
