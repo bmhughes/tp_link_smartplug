@@ -1,10 +1,30 @@
 inherit_from: .rubocop_todo.yml
 
+require:
+  - rubocop-rspec
+  - rubocop-rake
+
 AllCops:
+  NewCops: enable
   TargetRubyVersion: 2.5
+
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: never
+
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    default: '()'
+    '%i': '()'
+    '%w': '()'
 
 Style/SymbolArray:
   EnforcedStyle: brackets
 
 Style/Alias:
   EnforcedStyle: prefer_alias_method
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+
+RSpec/MultipleExpectations:
+  Max: 2

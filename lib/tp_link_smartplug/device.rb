@@ -1,10 +1,7 @@
-# frozen_string_literal: true
-
 require 'socket'
 require 'ipaddr'
 require 'json'
-require 'tp_link_smartplug/helpers'
-require 'tp_link_smartplug/message'
+require_relative './message'
 
 module TpLinkSmartplug
   # Provides an object to represent to a plug
@@ -14,17 +11,15 @@ module TpLinkSmartplug
   # @attr [Integer] port Port to connect to on the plug
   # @attr [Integer] timeout Timeout value for connecting and sending commands to the plug
   # @attr [true, false] debug Control debug logging
-  class Device
+  class Device < TpLinkSmartplug::Base
     include TpLinkSmartplug::Helpers
     include TpLinkSmartplug::Message
 
-    attr_accessor :address
-    attr_accessor :port
-    attr_accessor :timeout
-    attr_accessor :poll_auto_close
-    attr_accessor :debug
+    attr_accessor :address, :port, :timeout, :poll_auto_close, :debug
 
     def initialize(address:, port: 9999)
+      super
+
       @address = IPAddr.new(address, Socket::AF_INET)
       @port = port
       @timeout = 3
@@ -44,23 +39,32 @@ module TpLinkSmartplug
 
       begin
         @socket.connect_nonblock(@sockaddr)
+        debug_message('Connected') if @debug
       rescue IO::WaitWritable
         if IO.select(nil, [@socket], nil, timeout)
           begin
             @socket.connect_nonblock(@sockaddr)
           rescue Errno::EISCONN
-            debug_message('Connected') if debug
+            debug_message('Connected') if @debug
+          rescue Errno::ECONNREFUSED
+            @socket.close
+            raise TpLinkSmartplug::DeviceError, "Connection refused connecting to address #{@address}, port #{@port}!"
           rescue StandardError => e
             disconnect
-            debug_message('Unexpected exception encountered.') if debug
-            raise e
+            debug_message("Unexpected exception encountered. Error: #{e}") if @debug
+            raise
           end
         else
           @socket.close
-          raise "Connection timeout connecting to address #{@address}, port #{@port}."
+          raise TpLinkSmartplug::DeviceError, "Connection timeout connecting to address #{@address}, port #{@port}."
         end
       rescue Errno::EISCONN
-        debug_message('Connected') if debug
+        debug_message('Connected') if @debug
+      rescue Errno::EINPROGRESS
+        debug_message('Connection in progress') if @debug
+        retry
+      rescue Errno::ECONNREFUSED
+        raise TpLinkSmartplug::DeviceError, "Connection refused connecting to address #{@address}, port #{@port}."
       end
     end
 
@@ -113,11 +117,11 @@ module TpLinkSmartplug
         raise 'Error occured during disconnect' unless closed?
       end
 
-      raise 'No data received' if data.nil? || data.empty?
+      raise 'No data received' if nil_or_empty?(data)
 
-      debug_message("Received Raw: #{data}") if debug
+      debug_message("Received Raw: #{data}") if @debug
       data = decrypt(data[4..data.length])
-      debug_message("Received Decrypted: #{data}") if debug
+      debug_message("Received Decrypted: #{data}") if @debug
 
       data
     end
@@ -170,11 +174,13 @@ module TpLinkSmartplug
       :antitheft,
       :reboot,
       :reset,
-      :energy
+      :energy,
     ].each do |method|
       define_method method do
         JSON.parse(poll(command: TpLinkSmartplug::Command.const_get(method.upcase)))
       end
     end
   end
+
+  class DeviceError < TpLinkSmartplug::BaseError; end
 end

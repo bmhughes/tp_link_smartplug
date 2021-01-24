@@ -1,5 +1,5 @@
 ---
-name: ci
+name: CI
 
 on:
   pull_request:
@@ -9,20 +9,21 @@ on:
 
 jobs:
   rubocop:
+    name: RuboCop
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
+      - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Rubocop checks
-        uses: gimenete/rubocop-action@1.0
+        uses: bmhughes/rubocop-action@v1.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   markdownlint:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
+      - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Run Markdown Lint
@@ -35,7 +36,8 @@ jobs:
         ruby: [ '2.5', '2.6', '2.7' ]
     name: Test - Ruby ${{ matrix.ruby }}
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Set up Ruby ${{ matrix.ruby }}
         uses: actions/setup-ruby@v1
@@ -48,4 +50,42 @@ jobs:
           gem install bundler
           bundle install
           rake test
+
+      - name: Simplecov Report
+        uses: aki77/simplecov-report-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Ruby 2.7
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+
+      - name: Rake Build
+        run: |
+          ruby -v
+          gem install bundler
+          bundle install
+          rake clean test build
+
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: gem-file
+          path: pkg/*.gem
+          retention-days: 5
+
+      - name: Archive coverage report
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 3
 ...
