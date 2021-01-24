@@ -27,7 +27,6 @@ jobs:
 
       - name: Run Markdown Lint
         uses: actionshub/markdownlint@master
-
   test:
     runs-on: ubuntu-latest
     strategy:
