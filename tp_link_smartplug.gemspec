@@ -8,5 +8,6 @@ Gem::Specification.new do |spec|
   spec.homepage    = 'https://github.com/bmhughes/tp_link_smartplug'
   spec.files       = Dir.glob('./lib/**/*.rb')
   spec.license     = 'Apache-2.0'
+  spec.metadata    = { 'github_repo' => 'ssh://github.com/bmhughes/tp_link_smartplug' }
   spec.required_ruby_version = '>= 2.5'
 end
