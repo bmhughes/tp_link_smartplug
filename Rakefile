@@ -26,3 +26,11 @@ desc 'Start irb with ./lib included'
 task :console do
   exec 'irb -r tp_link_smartplug -I ./lib'
 end
+
+desc 'Clean build/test artifacts'
+task :clean do
+  sh 'rm -f *.gem'
+  sh 'rm -rf coverage'
+  sh 'rm -f spec/examples.txt'
+  sh 'rm -rf pkg'
+end
