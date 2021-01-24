@@ -6,6 +6,8 @@ module TpLinkSmartplug
   # @author Ben Hughes
   class Base
     include TpLinkSmartplug::Helpers
+
+    def initialize; end
   end
 
   # Base plug error class.

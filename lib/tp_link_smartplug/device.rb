@@ -18,7 +18,7 @@ module TpLinkSmartplug
     attr_accessor :address, :port, :timeout, :poll_auto_close, :debug
 
     def initialize(address:, port: 9999)
-      super
+      super()
 
       @address = IPAddr.new(address, Socket::AF_INET)
       @port = port
