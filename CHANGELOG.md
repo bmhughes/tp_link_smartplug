@@ -1,5 +1,9 @@
 # tp_link_smartplug
 
+## v0.2.1
+
+- Add missing base class initialize method
+
 ## v0.2.0
 
 - Refactor under base class
