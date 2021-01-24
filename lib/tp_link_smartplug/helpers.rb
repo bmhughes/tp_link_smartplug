@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'time'
 
 module TpLinkSmartplug
@@ -10,7 +8,16 @@ module TpLinkSmartplug
     # @param string [String] the message to be formatted for debug output
     def debug_message(string)
       caller_method = caller_locations(1..1).first.label
-      STDOUT.puts(Time.now.strftime('%Y-%m-%d %H:%M:%S: ').concat("#{caller_method}: ").concat(string))
+      $stdout.puts(Time.now.strftime('%Y-%m-%d %H:%M:%S: ').concat("#{caller_method}: ").concat(string))
+    end
+
+    # Tests a variable for nil or empty status
+    #
+    # @param v  the variable to be tested
+    def nil_or_empty?(value)
+      return true if value.nil? || (value.respond_to?(:empty?) && value.empty?)
+
+      false
     end
   end
 end
