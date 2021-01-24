@@ -10,7 +10,18 @@ Layout/EndOfLine:
   Exclude:
     - '**/*'
 
-Metrics/LineLength:
+Metrics/BlockNesting:
+  Max: 4
+
+Metrics/ClassLength:
+  Exclude:
+    - '**/*'
+
+Layout/LineLength:
+  Exclude:
+    - '**/*'
+
+Metrics/MethodLength:
   Exclude:
     - '**/*'
 
@@ -22,12 +33,6 @@ Style/FrozenStringLiteralComment:
   Exclude:
     - 'lib/tp_link_smartplug/message_helpers.rb'
     - 'spec/tp_link_smartplug_message_helpers_spec.rb'
-
-Metrics/BlockNesting:
-  Max: 4
-
-Metrics/MethodLength:
-  Max: 30
 
 Metrics/AbcSize:
   Max: 28
