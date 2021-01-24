@@ -38,6 +38,7 @@ jobs:
           prerelease: false
 
       - name: Publish to GPR
+        continue-on-error: true
         run: |
           mkdir -p $HOME/.gem
           touch $HOME/.gem/credentials
@@ -50,6 +51,7 @@ jobs:
           OWNER: ${{ github.repository_owner }}
 
       - name: Publish to RubyGems
+        continue-on-error: true
         run: |
           mkdir -p $HOME/.gem
           touch $HOME/.gem/credentials
