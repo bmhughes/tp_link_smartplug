@@ -1,5 +1,10 @@
 # tp_link_smartplug
 
+## v0.2.0
+
+- Refactor under base class
+- Add custom exception classes
+
 ## v0.1.0
 
 - Device class refactored into a more object orientated form
