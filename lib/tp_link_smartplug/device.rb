@@ -46,9 +46,9 @@ module TpLinkSmartplug
             @socket.connect_nonblock(@sockaddr)
           rescue Errno::EISCONN
             debug_message('Connected') if @debug
-          rescue Errno::ECONNREFUSED
+          rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH
             @socket.close
-            raise TpLinkSmartplug::DeviceError, "Connection refused connecting to address #{@address}, port #{@port}!"
+            raise TpLinkSmartplug::DeviceError, "Connection refused or host unreachable connecting to address #{@address}, port #{@port}!"
           rescue StandardError => e
             disconnect
             debug_message("Unexpected exception encountered. Error: #{e}") if @debug
