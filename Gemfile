@@ -6,6 +6,7 @@ gem 'rake'
 
 group :development do
   gem 'byebug'
+  gem 'irb'
   gem 'pry'
 end
 

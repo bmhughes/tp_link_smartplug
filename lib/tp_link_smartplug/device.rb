@@ -119,7 +119,7 @@ module TpLinkSmartplug
 
       raise 'No data received' if nil_or_empty?(data)
 
-      debug_message("Received Raw: #{data}") if @debug
+      debug_message("Received Raw: #{data.split('\\')}") if @debug
       data = decrypt(data[4..data.length])
       debug_message("Received Decrypted: #{data}") if @debug
 
