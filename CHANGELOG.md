@@ -1,5 +1,11 @@
 # tp_link_smartplug
 
+## v0.3.0
+
+- Rescue host not reachable error when connecting
+- Test and build with Ruby 3.0
+- Fix debug output conversion error
+
 ## v0.2.1
 
 - Add missing base class initialize method
