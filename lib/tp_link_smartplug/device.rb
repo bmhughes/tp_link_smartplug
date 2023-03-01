@@ -144,6 +144,9 @@ module TpLinkSmartplug
     # @!method time
     #   Return system time from the plug
     #   @return [Hash]
+    # @!method timezone
+    #   Return system timezone from the plug
+    #   @return [Hash]
     # @!method schedule
     #   Return schedule configured on the plug
     #   @return [Hash]
@@ -156,11 +159,17 @@ module TpLinkSmartplug
     # @!method reboot
     #   Reboot plug
     #   @return [Hash]
-    # @!method resry
+    # @!method reset
     #   Reset plug
     #   @return [Hash]
     # @!method energy
     #   Return plug energy data
+    #   @return [Hash]
+    # @!method ledon
+    #   Disable plug night mode (LED on)
+    #   @return [Hash]
+    # @!method ledoff
+    #   Enable plug night mode (LED off)
     #   @return [Hash]
     [
       :info,
@@ -169,17 +178,38 @@ module TpLinkSmartplug
       :cloudinfo,
       :wlanscan,
       :time,
+      :timezone,
       :schedule,
       :countdown,
       :antitheft,
       :reboot,
       :reset,
       :energy,
+      :energygains,
+      :ledon,
+      :ledoff,
     ].each do |method|
       define_method method do
         JSON.parse(poll(command: TpLinkSmartplug::Command.const_get(method.upcase)))
       end
     end
+  end
+
+  # Set plug alias
+  #
+  # @param name [String] the name to assign to the plug alias
+  # @return [Hash] the output from the plug command
+  def alias=(name)
+    JSON.parse(poll(command: "{\"system\":{\"set_dev_alias\":{\"alias\":\"#{name}\"}}}"))
+  end
+
+  # Set plug location
+  #
+  # @param longitude [String] the longitude to assign to the plug location
+  # @param lattitude [String] the lattitude to assign to the plug location
+  # @return [Hash] the output from the plug command
+  def location!(longitude, lattitude)
+    JSON.parse(poll(command: "{\"system\":{\"set_dev_location\":{\"longitude\":\"#{lattitude}\", \"latitude\":\"#{longitude}\"}}}"))
   end
 
   class DeviceError < TpLinkSmartplug::BaseError; end

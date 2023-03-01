@@ -8,6 +8,7 @@ group :development do
   gem 'byebug'
   gem 'irb'
   gem 'pry'
+  gem 'solargraph'
 end
 
 group :test do

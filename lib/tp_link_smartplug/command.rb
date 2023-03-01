@@ -13,6 +13,8 @@ module TpLinkSmartplug
     WLANSCAN = '{"netif":{"get_scaninfo":{"refresh":0}}}'.freeze
     # Plug time command
     TIME = '{"time":{"get_time":{}}}'.freeze
+    # Plug timezone command
+    TIMEZONE = '{"time":{"get_timezone":{}}}'.freeze
     # Plug schedule command
     SCHEDULE = '{"schedule":{"get_rules":{}}}'.freeze
     # Plug countdown command
@@ -25,5 +27,11 @@ module TpLinkSmartplug
     RESET = '{"system":{"reset":{"delay":1}}}'.freeze
     # Plug energy command
     ENERGY = '{"emeter":{"get_realtime":{}}}'.freeze
+    # Plug energy VGain/IGain settings
+    ENERGYGAINS = '{"emeter":{"get_vgain_igain":{}}}'.freeze
+    # Plug LED On
+    LEDON = {"system":{"set_led_off":{"off":0}}}.freeze
+    # Plug LED Off
+    LEDOFF = {"system":{"set_led_off":{"off":1}}}.freeze
   end
 end
