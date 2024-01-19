@@ -16,9 +16,9 @@ module TpLinkSmartplug
     include TpLinkSmartplug::Helpers
     include TpLinkSmartplug::Message
 
-    attr_accessor :address, :port, :timeout, :poll_auto_close, :debug
+    attr_accessor :address, :port, :timeout, :poll_auto_close, :auto_connect, :debug
 
-    def initialize(address:, port: 9999)
+    def initialize(address:, port: 9999, auto_connect: true, auto_disconnect: true)
       super()
 
       @address = IPAddr.new(address, Socket::AF_INET)
@@ -27,7 +27,10 @@ module TpLinkSmartplug
       @debug = false
       @sockaddr = Addrinfo.getaddrinfo(@address.to_s, @port, Socket::PF_INET, :STREAM, 6).first.to_sockaddr
       @socket = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM)
-      @poll_auto_close = true
+      @poll_auto_close = auto_disconnect
+      @auto_connect = auto_connect
+
+      connect if auto_connect
     end
 
     # Open connection to plug
@@ -42,7 +45,7 @@ module TpLinkSmartplug
         @socket.connect_nonblock(@sockaddr)
         debug_message('Connected') if @debug
       rescue IO::WaitWritable
-        if @socket.wait_writable(timeout)
+        if @socket.wait_writable(@timeout)
           begin
             @socket.connect_nonblock(@sockaddr)
           rescue Errno::EISCONN
@@ -56,7 +59,7 @@ module TpLinkSmartplug
             raise
           end
         else
-          @socket.close
+          disconnect
           raise TpLinkSmartplug::DeviceError, "Connection timeout connecting to address #{@address}, port #{@port}."
         end
       rescue Errno::EISCONN
@@ -72,7 +75,7 @@ module TpLinkSmartplug
     # Close connection to plug
     #
     def disconnect
-      @socket.close unless @socket.closed?
+      @socket.close unless closed?
     end
 
     alias_method :close, :disconnect
@@ -88,7 +91,11 @@ module TpLinkSmartplug
     #
     # @return [True, False]
     def closed?
-      @socket.closed?
+      @socket.recvfrom_nonblock(0)
+    rescue IO::WaitReadable
+      false
+    rescue Errno::ENOTCONN, IOError
+      true
     end
 
     # Polls plug with a command
@@ -96,7 +103,7 @@ module TpLinkSmartplug
     # @param command [String] the command to send to the plug
     # @return [Hash] the output from the plug command
     def poll(command:)
-      connect
+      connect if closed?
 
       begin
         debug_message("Sending: #{decrypt(encrypt(command)[4..(command.length + 4)])}") if @debug
@@ -115,10 +122,10 @@ module TpLinkSmartplug
 
       if @poll_auto_close && !closed?
         disconnect
-        raise 'Error occured during disconnect' unless closed?
+        raise DeviceError, 'Error occured during disconnect' unless closed?
       end
 
-      raise 'No data received' if nil_or_empty?(data)
+      raise DeviceError, 'No data received' if nil_or_empty?(data)
 
       debug_message("Received Raw: #{data.split('\\')}") if @debug
       data = decrypt(data[4..data.length])
