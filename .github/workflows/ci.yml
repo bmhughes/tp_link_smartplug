@@ -8,17 +8,17 @@ on:
       - main
 
 jobs:
-  rubocop:
-    name: RuboCop
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+  # rubocop:
+  #   name: RuboCop
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
 
-      - name: Rubocop checks
-        uses: bmhughes/rubocop-action@v1.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Rubocop checks
+  #       uses: bmhughes/rubocop-action@v1.2
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   markdownlint:
     runs-on: ubuntu-latest
@@ -33,14 +33,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: [ '2.5', '2.6', '2.7', '3.0' ]
+        ruby: [ '3.0', '3.1', '3.2' ]
     name: Test - Ruby ${{ matrix.ruby }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Set up Ruby ${{ matrix.ruby }}
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1.168.0
         with:
           ruby-version: ${{ matrix.ruby }}
 
@@ -63,10 +63,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Ruby 3.0
-        uses: actions/setup-ruby@v1
+      - name: Set up Ruby 3.1
+        uses: ruby/setup-ruby@v1.168.0
         with:
-          ruby-version: 3.0
+          ruby-version: 3.1
 
       - name: Rake Build
         run: |

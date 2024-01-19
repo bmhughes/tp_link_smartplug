@@ -18,7 +18,7 @@ rubocop:
    - rubocop --version
    - rubocop
   tags:
-    - ruby
+    - docker
 
 rspec:
   stage: rspec
@@ -27,7 +27,7 @@ rspec:
    - rspec --version
    - rake spec
   tags:
-    - ruby
+    - docker
 
 gem_build:
   stage: build
@@ -38,7 +38,7 @@ gem_build:
    - yard --version
    - yard
   tags:
-    - ruby
+    - docker
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_SHA"
     when: on_success
