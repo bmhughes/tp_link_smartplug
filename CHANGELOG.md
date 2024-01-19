@@ -1,5 +1,12 @@
 # tp_link_smartplug
 
+## v0.4.0
+
+- Refactor connect/disconnect logic
+- Correct initial connection timeout variable
+- Add auto connect/disconnect option to device `TpLinkSmartplug::Device.new`
+- Rubocop fixup
+
 ## v0.3.0
 
 - Rescue host not reachable error when connecting
