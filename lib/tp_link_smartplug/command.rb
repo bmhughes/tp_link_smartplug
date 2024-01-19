@@ -30,8 +30,8 @@ module TpLinkSmartplug
     # Plug energy VGain/IGain settings
     ENERGYGAINS = '{"emeter":{"get_vgain_igain":{}}}'.freeze
     # Plug LED On
-    LEDON = {"system":{"set_led_off":{"off":0}}}.freeze
+    LEDON = '{"system":{"set_led_off":{"off":0}}}'.freeze
     # Plug LED Off
-    LEDOFF = {"system":{"set_led_off":{"off":1}}}.freeze
+    LEDOFF = '{"system":{"set_led_off":{"off":1}}}'.freeze
   end
 end

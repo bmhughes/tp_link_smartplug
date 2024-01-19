@@ -1,8 +1,9 @@
 require 'socket'
 require 'ipaddr'
 require 'json'
-require_relative './message'
+require_relative 'message'
 
+# Top level module
 module TpLinkSmartplug
   # Provides an object to represent to a plug
   #
@@ -101,14 +102,14 @@ module TpLinkSmartplug
         debug_message("Sending: #{decrypt(encrypt(command)[4..(command.length + 4)])}") if @debug
         @socket.write_nonblock(encrypt(command))
       rescue IO::WaitWritable
-        IO.select(nil, [@socket])
+        @socket.wait_writable(@timeout)
         retry
       end
 
       begin
         data = @socket.recv_nonblock(2048)
       rescue IO::WaitReadable
-        IO.select([@socket])
+        @socket.wait_readable(@timeout)
         retry
       end
 
